@@ -1,0 +1,149 @@
+---
+title: "Phase Field Modeling with Finite Element Method"
+author: "Mallory Lai, Geeta Monpara, Xiukun Hu"
+date: "11/11/2016"
+output: pdf_document
+---
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Since the underlying microstructure of a material can affect its physical properties, it is important to understand the processes underlying microstructure formation in order to improve engineered materials.$^1$ However, modeling microstructure formation is complicated by the fact that the structures are thermodynamically unstable and thus evolve over time.$^2$ Phase field modeling has gained popularity as a technique for simulating microstructure evolution due to its ability to incorporate different thermodynamic driving forces into the model. As such, it can be used to simulate the microstructure evolution seen in such processes as solidification, grain growth, and solid-state phase transformations.$^2$ 
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;When it comes to phase field modeling, one of the most efficient and accuracte numerical methods ..... We present here the Galerkin finite element in 2D. 
+
+&nbsp;
+
+#####Phase field equation:   
+
+\[ \frac{\partial \phi}{\partial t}
+   = 2 \left( \frac{\partial^2 \phi}{\partial x^2}
+      + \frac{\partial^2 \phi}{\partial y^2}\right)
+      -g(\phi) \tag{1}
+\]
+
+where 
+
+\[
+g(\phi)=a\phi^3 + b\phi^2 + c\phi
+\]
+
+\[
+\Rightarrow \frac{\partial \phi}{\partial t}-2\nabla\cdot\nabla\phi+g(\phi)=0
+\]
+
+#####Applying the Galerkin method:
+
+\[
+\int\int [N]^T \{\frac{\partial \phi}{\partial t}-2\nabla\cdot\nabla\phi+g(\phi)\}dxdy = 0
+\]
+
+#####Working in a local coordinate system $(\xi-\eta)$ and distributing:  
+
+  
+\[
+\int_{\Omega_{e_{i}}}\int \left( [N]^T\frac{\partial \phi}{\partial t}-[N]^T2\nabla\cdot\nabla\phi+ [N]^T g(\phi) \right) dxdy
+\]
+
+ First term: 
+\[
+\int_{\Omega_{e_{i}}}\int \left( [N]^T\frac{\partial \phi}{\partial t} \right) dxdy
+\]
+
+
+$$=\int_{-1}^{1}\int_{-1}^{1} \left( [N(\xi,\eta)]^T \frac {\partial \phi(\xi,\eta)}{\partial t} |J| \right)  d\xi d\eta$$
+
+$$=\int_{-1}^{1}\int_{-1}^{1} \left( [N(\xi,\eta)]^T \frac {\partial ([N(\xi,\eta)][\phi_{e_{i}} ]^T)}{\partial t} |J| \right)  d\xi d\eta$$
+
+$$= |J| \int_{-1}^{1}\int_{-1}^{1} \left( [N]^T [N][\dot{\phi}_{e_{i}} ]^T) \right)  d\xi d\eta$$
+  
+$$= \left[ |J|\int_{-1}^{1}\int_{-1}^{1} \left( [N]^T [N]) \right)  d\xi d\eta \right] [\dot{\phi}_{e_{i}} ]^T$$  
+  
+where $$[\dot{\phi}_{e_{i}} ]^T =  \frac {\partial [\phi_{e_{i}} ])^T}{\partial t}$$    
+  
+$$ =  \frac{ \left[ \phi_{e_{i}}^{n+1} \right]^T - \left[ \phi_{e_{i}}^{n} \right]^T}{\Delta t}   $$    
+  
+First term = $$[C_{e_{i}}] [\dot{\phi}_{e_{i}} ]^T \tag{i}$$  
+  
+Second term: 
+  
+\[
+\int_{\Omega_{e_{i}}}\int \left( [N]^T2\nabla\cdot\nabla\phi \right) dxdy
+\]  
+  
+Applying Green's theorem/Divergence theorem:   
+  
+$$=2 \{ -\int_{\Omega_{e_{i}}}\int \nabla\phi \cdot [N]^T dxdy + \oint N_{i}\nabla\phi\eta dl \}  $$  
+...  
+...  
+...  
+
+&nbsp;
+
+Third term:  
+  
+\[
+\int_{\Omega_{e_{i}}}\int \left( [N]^T g(\phi) \right) dxdy
+\]  
+  
+$$ I_{1} = \int_{\Omega_{e_{i}}}\int \left( [N]^T \phi \right) dxdy $$    
+  
+$$ I_{1} = \int \int \left( [N]^T [N] [\phi_{e_{i}}]^T \right) dxdy $$  
+  
+$$ = \int_{-1}^{1}\int_{-1}^{1} \left( [N]^T [N] [\phi_{e_{i}}]^T |J| \right) d\xi d\eta $$  
+  
+$$\Rightarrow \phi = [N][\phi_{e_{i}}]^T \Rightarrow [N]^T \phi = [C_{e_{i}}[\phi_{e_{i}}]] $$  
+  
+$$\Rightarrow \phi^2 = \left( [N][\phi_{e_{i}}]^T \right)^2 $$  
+  
+$$ = [\phi_{e_{i}}] [N]^T [N] [\phi_{e_{i}}]^T $$  
+  
+$$ = [\phi_{e_{i}}] [C_{e}] [\phi_{e_{i}}]^T $$   
+  
+where: $$ [C_{e}] = [N]^T [N] $$  
+  
+$$\Rightarrow \phi^3 = \left( [N][\phi_{e_{i}}]^T \right)^3 $$    
+  
+$$ = [N] [\phi_{e_{i}}]^T [\phi_{e_{i}}] [N]^T [N] [\phi_{e_{i}}]^T $$  
+  
+$$ = [N] [\phi_{e_{i}}]^T [\phi_{e_{i}}] [C_{e}] [\phi_{e_{i}}]^T $$  
+  
+$$ = [\phi_{e_{i}}]^T [\phi_{e_{i}}] \underbrace{[N] [C_{e_{i}}]}_{[D_{e_{i}}]} [\phi_{e_{i}}]^T $$     
+  
+$$ = [\phi_{e_{i}}]^T [\phi_{e_{i}}] [D_{e_{i}}] [\phi_{e_{i}}]^T $$  
+  
+$$ [N]^T \phi^3 = [\phi_{e_{i}}]^T [\phi_{e_{i}}] [C_{e_{i}}]^2 [\phi_{e_{i}}]^T $$ 
+  
+Hence, 
+  
+$$ \int_{\Omega_{e_{i}}}\int \left( [N]^T g(\phi) \right) dxdy $$  
+  
+$$  = \int_{-1}^{1}\int_{-1}^{1} \left( [N]^T (a\phi^3 + b\phi^2 + c\phi) |J| \right) d\xi d\eta $$  
+  
+$$  =  \left[ a \int_{-1}^{1}\int_{-1}^{1} \left( [\phi_{e_{i}}]^T [\phi_{e_{i}}] [C_{e_{i}}]^2 |J| \right) d\xi d\eta + b \int_{-1}^{1}\int_{-1}^{1} \left( [N]^T [\phi_{e_{i}}] [C_{e_{i}}] |J| \right) d\xi d\eta + \underbrace{c \int_{-1}^{1}\int_{-1}^{1} \left( [C_{e_{i}}] \right) d\xi d\eta}_{G_{e}}  \right]  [\phi_{e_{i}}]^T $$  
+  
+Writing phase-field equation in terms of matrices:   
+  
+$$= |J| \left[ \int_{-1}^{1}\int_{-1}^{1} [C_{e}]  d\xi d\eta \right] [\dot{\phi}_{e_{i}} ]^T $$  
+$$ = 2[K_{e}] [\phi_{e_{i}}]^T - [G_{e}] [\phi_{e_{i}}]^T $$  
+  
+Where,  
+  
+$$[C_{e_{i}}] = [N]^T [N] $$  
+
+
+
+  
+&nbsp;
+
+&nbsp;
+
+&nbsp;
+
+&nbsp;
+
+&nbsp;
+
+&nbsp;
+
+&nbsp;
+
+&nbsp;
+
+
