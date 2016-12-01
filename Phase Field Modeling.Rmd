@@ -1,12 +1,14 @@
 ---
-title: "Phase Field Modeling with Finite Element Method"
-author: "Mallory Lai, Geeta Monpara, Xiukun Hu"
+title: "Phase-Field Modeling with Finite Element Method"
+author: "Xiukun Hu, Mallory Lai, Geeta Monpara"
 date: "11/11/2016"
 output: pdf_document
 ---
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Since the underlying microstructure of a material can affect its physical properties, it is important to understand the processes underlying microstructure formation in order to improve engineered materials.$^1$ However, modeling microstructure formation is complicated by the fact that the structures are thermodynamically unstable and thus evolve over time.$^2$ Phase field modeling has gained popularity as a technique for simulating microstructure evolution due to its ability to incorporate different thermodynamic driving forces into the model. As such, it can be used to simulate the microstructure evolution seen in such processes as solidification, grain growth, and solid-state phase transformations.$^2$ 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Since the underlying microstructure of a material can affect its physical properties, it is important to understand the processes underlying microstructure formation in order to improve engineered materials.$^1$ However, modeling microstructure formation is complicated by the fact that the structures are thermodynamically unstable and thus evolve over time.$^2$ Phase-field modeling has gained popularity as a technique for simulating microstructure evolution due to its ability to incorporate different thermodynamic driving forces into the model. As such, it can be used to simulate the microstructure evolution seen in such processes as solidification, grain growth, and solid-state phase transformations.$^2$ 
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;When it comes to phase field modeling, one of the most efficient and accuracte numerical methods ..... We present here the Galerkin finite element in 2D. 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; When it comes to phase-field modeling, the finite element method underlies some of the most efficient and accuracte numerical methods to date.$^3$ The strength of the finite element method arises from its ability to model irregular shapes, heterogeneous materials, general load conditions, nonlinear behavior, and dynamic effects. Furthermore, once the finite element model is established, it can be modified relatively easily.$^4$ Finite element analysis involves the conversion of the original partial differential equation (PDE) from its original, strong form, into a weak integral form. The domain is then discretized into elements from which shape functions are used to find an approximate numerical solution.$^5$  
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; We present here the Galerkin finite element in 2D. The Galerkin method is an example of a weighted residual method which assumes the same shape functions are used for both the solution and the weights. 
 
 &nbsp;
 
@@ -146,4 +148,8 @@ $$[C_{e_{i}}] = [N]^T [N] $$
 
 &nbsp;
 
-
+1.	Nestler, B. 7 - Phase-Field Modeling, In Computational Materials Engineering, Academic Press, Burlington, 2007, Pages 219-266, http://dx.doi.org/10.1016/B978-012369468-3/50007-1.
+2.	Moelans, N., Blanpain, B., & Wollants, P. (2008). Calphad: An introduction to phase-field modeling of microstructure evolution Pergamon Press. doi:10.1016/j.calphad.2007.11.003
+3. Provatas, N., Elder, K. Phase-Field Methods in Material Science and Engineering. Wiley-VCH, 2010.
+4. Logan, D. A First Course in the Finite Element Method, Fourth Edition. Thomson, 2007. 
+5. Becker, T., & Kaus, B. Numerical Modeling of Earth Systems: An introduction to computational methods with focus on solid Earth applications of continuum mechanics. USC, Los Angeles, 2016. 
