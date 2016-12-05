@@ -221,7 +221,7 @@ function fem2d_phasefield_linear ( nx, ny, dt )
 %  finite element equations, ignoring boundary conditions.
 %
   b = zeros(node_num,1);
-  a = sparse ( [], [], [], node_num, node_num );
+  a = zeros(node_num, node_num);
   c = a;
 
   for e = 1 : element_num
@@ -291,7 +291,8 @@ function fem2d_phasefield_linear ( nx, ny, dt )
           c(nti1,ntj1) = c(nti1,ntj1) ...
               + area * wq * ( qi * qj);
           a(nti1,ntj1) = a(nti1,ntj1) ...
-            + area * wq * ( dqidx * dqjdx + dqidy * dqjdy );
+            - area * wq * ( dqidx * dqjdx + dqidy * dqjdy ) + (node_xy(1,nti1)-node_xy(1,ntj1)) * qi * dqjdx ...
+           + (node_xy(2,nti1)-node_xy(2,ntj1)) * qi * dqjdy;
         
         end
 
@@ -310,7 +311,7 @@ function fem2d_phasefield_linear ( nx, ny, dt )
 surf(reshape(phi',nx,ny));
 
 for it = 0:nt
-b = -a * phi;
+b = 2 * a * phi;
 dphidt = c \ b;
 nphi = dt * dphidt + phi;
 k = 0;
