@@ -124,8 +124,8 @@ $(document).ready(function () {
 
 
 <p>        Since the underlying microstructure of a material can affect its physical properties, it is important to understand the processes underlying microstructure formation in order to improve engineered materials.<span class="math">\(^1\)</span> However, modeling microstructure formation is complicated by the fact that the structures are thermodynamically unstable and thus evolve over time.<span class="math">\(^2\)</span> Phase-field modeling has gained popularity as a technique for simulating microstructure evolution due to its ability to incorporate different thermodynamic driving forces into the model. As such, it can be used to simulate the microstructure evolution seen in such processes as solidification, grain growth, and solid-state phase transformations.<span class="math">\(^2\)</span></p>
-<p>         When it comes to phase-field modeling, the finite element method underlies some of the most efficient and accuracte numerical methods to date.<span class="math">\(^3\)</span> The strength of the finite element method arises from its ability to model irregular shapes, heterogeneous materials, general load conditions, nonlinear behavior, and dynamic effects. Furthermore, once the finite element model is established, it can be modified relatively easily.<span class="math">\(^4\)</span> Finite element analysis involves the conversion of the original partial differential equation (PDE) from its original, strong form, into a weak integral form. The domain is then discretized into elements from which shape functions are used to find an approximate numerical solution.<span class="math">\(^5\)</span></p>
-<p>         We present here the Galerkin finite element in 2D. The Galerkin method is an example of a weighted residual method which assumes the same shape functions are used for both the solution and the weights.<span class="math">\(^5\)</span></p>
+<p>         When it comes to phase-field modeling, the finite element method (FEM) underlies some of the most efficient and accuracte numerical methods to date.<span class="math">\(^3\)</span> The strength of the finite element method arises from its ability to model irregular shapes, heterogeneous materials, general load conditions, nonlinear behavior, and dynamic effects. Furthermore, once the finite element model is established, it can be modified relatively easily.<span class="math">\(^4\)</span> Finite element analysis involves the conversion of the original partial differential equation (PDE) from its original, strong form, into a weak integral form. The domain is then discretized into elements from which shape functions are used to find an approximate numerical solution.<span class="math">\(^5\)</span></p>
+<p>         We present here the Galerkin finite element in 2D. The Galerkin method is an example of a weighted residual method which assumes the same shape functions are used for both the solution and the weights.<span class="math">\(^5\)</span> We begin by identifying the strong form PDE and rearranging to get zero on the right hand side. We then multiply the resulting equation by our shape function, as per the Galerkin method.<span class="math">\(^6\)</span> Finally, we integrate over the domain, accounting for both local and global coordinate systems.</p>
 <p> </p>
 <div id="phase-field-equation" class="section level5">
 <h5>Phase field equation:</h5>
@@ -197,6 +197,10 @@ g(\phi)=a\phi^3 + b\phi^2 + c\phi
 <p>Where,</p>
 <p><span class="math">\[[C_{e_{i}}] = [N]^T [N] \]</span></p>
 <p> </p>
+</div>
+<div id="methods" class="section level3">
+<h3>Methods</h3>
+<p>In order to implement the FEM, we began with a rectangular mesh generating code written in Matlab.<span class="math">\(^7\)</span> From here, we modified the code to fit our model. This involved changing ____________. Finally, we translated our modified Matlab code into C.</p>
 <p> </p>
 <p> </p>
 <p> </p>
@@ -210,6 +214,8 @@ g(\phi)=a\phi^3 + b\phi^2 + c\phi
 <li>Provatas, N., Elder, K. Phase-Field Methods in Material Science and Engineering. Wiley-VCH, 2010.</li>
 <li>Logan, D. A First Course in the Finite Element Method, Fourth Edition. Thomson, 2007.</li>
 <li>Becker, T., &amp; Kaus, B. Numerical Modeling of Earth Systems: An introduction to computational methods with focus on solid Earth applications of continuum mechanics. USC, Los Angeles, 2016.</li>
+<li>MOOSE website.</li>
+<li>Burkardt, J. fem2d_poisson_rectangle_linear.m 2010.</li>
 </ol>
 </div>
 
