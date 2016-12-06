@@ -87,12 +87,19 @@ function fem2d_phasefield_linear ( nx, ny, dt )
 %
 %   timestamp ( );
 
-  %%
+  %% Phase field parameters:
   phi = zeros(nx,ny);
   phi(round(nx/3):floor(nx/3*2),round(ny/3):floor(ny/3*2)) = 1;
   phi = reshape(phi',[],1);
   nt = 1/dt;
   
+  eps = 1.0;                            % makes interface more or less diffused, positive nonnegative values only
+  m = 1.0;                              % determines the direction in which the interface moves, can hae positive/negative/zero values
+  
+  % Coeffiecients of g(phi) function:
+  a = -36/eps^2;
+  b = (54/eps^2)+(6*m/eps);
+  c = -((18/eps^2)+(6*m/eps));
   
   %%
   element_order = 3;
