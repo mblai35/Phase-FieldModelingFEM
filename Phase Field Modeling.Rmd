@@ -2,7 +2,7 @@
 title: "Phase-Field Modeling with Finite Element Method"
 author: "Xiukun Hu, Mallory Lai, Geeta Monpara"
 date: "11/11/2016"
-output: html_document
+output: pdf_document
 ---
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Since the underlying microstructure of a material can affect its physical properties, it is important to understand the processes underlying microstructure formation in order to improve engineered materials.$^1$ However, modeling microstructure formation is complicated by the fact that the structures are thermodynamically unstable and thus evolve over time.$^2$ Phase-field modeling has gained popularity as a technique for simulating microstructure evolution due to its ability to incorporate different thermodynamic driving forces into the model. As such, it can be used to simulate the microstructure evolution seen in such processes as solidification, grain growth, and solid-state phase transformations.$^2$ 
 
