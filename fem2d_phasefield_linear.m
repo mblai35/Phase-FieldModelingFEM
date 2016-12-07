@@ -1,5 +1,16 @@
-function fem2d_phasefield_linear ( nx, ny, dt )
+function fem2d_phasefield_linear ( nx, ny, dt, cond, seed )
 
+%% Input instructions:
+%  nx : x descritization
+%  ny : y descritization
+%  dt : time descritization
+%  cond : Type of BCs => 'N' for Neumann
+%                        'D' for Dirichlet
+%                        'PB' for Periodic
+%  seed : 1 for seed in the center
+%         2 for seed at the corner
+% 
+% 
 %*****************************************************************************80
 %
 %% MAIN is the main routine for FEM2D_POISSON_RECTANGLE_LINEAR.
@@ -87,25 +98,28 @@ function fem2d_phasefield_linear ( nx, ny, dt )
 %
 %   timestamp ( );
 
-  %% Phase field parameters:
+epsilon = 1;
+m = 0;
+par_a = - 36/(epsilon^2);
+par_b = 54/(epsilon^2) + 6 * m / epsilon;
+par_c = -(18 / epsilon^2 + 6 * m / epsilon);
+  %%
   phi = zeros(nx,ny);
-  phi(round(nx/3):floor(nx/3*2),round(ny/3):floor(ny/3*2)) = 1;
-  phi = reshape(phi',[],1);
-  nt = 1/dt;
-  
-  eps = 1.0;                            % makes interface more or less diffused, positive nonnegative values only
-  m = 1.0;                              % determines the direction in which the interface moves, can hae positive/negative/zero values
-  
-  % Coeffiecients of g(phi) function:
-  a = -36/eps^2;
-  b = (54/eps^2)+(6*m/eps);
-  c = -((18/eps^2)+(6*m/eps));
+  if seed == 1
+    phi(round(nx/3):floor(nx/3*2),round(ny/3):floor(ny/3*2)) = 1;
+  elseif seed == 2
+          phi(1:round(nx/2), : ) = 1;
+  else
+    phi(round(1):floor(nx/3),round(1):floor(ny/3)) = 1;
+  end
+  phi = reshape(phi,[],1);
+  nt = 1000;
   
   %%
   element_order = 3;
 
   xl = 0.0;
-  xr = 1.0;
+  xr = 10.0;
   yb = 0.0;
   yt = 1.0;
 
@@ -233,14 +247,14 @@ function fem2d_phasefield_linear ( nx, ny, dt )
 
   for e = 1 : element_num
 
-    i1 = element_node(1,e);
-    i2 = element_node(2,e);
-    i3 = element_node(3,e);
+    gi1 = element_node(1,e);
+    gi2 = element_node(2,e);
+    gi3 = element_node(3,e);
 
     area = 0.5 * ...
-      ( node_xy(1,i1) * ( node_xy(2,i2) - node_xy(2,i3) ) ...
-      + node_xy(1,i2) * ( node_xy(2,i3) - node_xy(2,i1) ) ...
-      + node_xy(1,i3) * ( node_xy(2,i1) - node_xy(2,i2) ) );
+      ( node_xy(1,gi1) * ( node_xy(2,gi2) - node_xy(2,gi3) ) ...
+      + node_xy(1,gi2) * ( node_xy(2,gi3) - node_xy(2,gi1) ) ...
+      + node_xy(1,gi3) * ( node_xy(2,gi1) - node_xy(2,gi2) ) );
 %
 %  Consider each quadrature point.
 %  Here, we use the midside nodes as quadrature points.
@@ -298,8 +312,7 @@ function fem2d_phasefield_linear ( nx, ny, dt )
           c(nti1,ntj1) = c(nti1,ntj1) ...
               + area * wq * ( qi * qj);
           a(nti1,ntj1) = a(nti1,ntj1) ...
-            - area * wq * ( dqidx * dqjdx + dqidy * dqjdy ) + (node_xy(1,nq1)-node_xy(1,nq2)) * qi * dqjdx ...
-           + (node_xy(2,nq1)-node_xy(2,nq2)) * qi * dqjdy;
+            + area * wq * ( dqidx * dqjdx + dqidy * dqjdy );
         
         end
 
@@ -308,365 +321,157 @@ function fem2d_phasefield_linear ( nx, ny, dt )
     end
 
   end
-%
-%  BOUNDARY CONDITIONS
-%
-%  If the K-th variable is at a boundary node, replace the K-th finite
-%  element equation by a boundary condition that sets the variable to U(K).
-%
-
-surf(reshape(phi',nx,ny));
-
+% figure;
+% surf(reshape(phi',nx,ny))
+figure;
 for it = 0:nt
-b = 2 * a * phi;
-dphidt = c \ b;
-nphi = dt * dphidt + phi;
-k = 0;
+  if it == nt
+      imagesc(reshape(phi,nx,ny));
+      colormap('gray');
+      pbaspect([1 10 1])
+      zlim([0 1]);
+      colorbar;
+      pause(0.001)
+      drawnow;
+  end
+
+  phi_dummy = reshape(phi,nx,ny);
 
   for j = 1 : ny
       
       for i = 1 : nx
-          
-          k = k + 1;
-          
-          if ( i == 1 | i == nx | j == 1 | j == ny )
+          if (cond == 'D')
+              % Dirichlet Boundary condition:
+              if ( i == 1 || i == nx || j == 1 || j == ny )
+
+                phi_dummy(i,j) = 0;
+
+              end
               
-%               [ u, dudx, dudy ] = exact ( node_xy(1,k), node_xy(2,k) );
-%               
-%               a(k,1:node_num) = 0.0;
-%               a(k,k)          = 1.0;
-%               b(k)            = 0;
-            nphi(k) = 0;
-              
+          elseif (cond == 'N')
+          
+              %Nuemann Boundary conditions:
+              if ( i == 1 )
+                  phi_dummy(i,j) = phi_dummy(i+1,j);
+              elseif( i == nx )
+                  phi_dummy(i,j) = phi_dummy(i-1,j);
+              elseif( j == 1 )
+                  phi_dummy(i,j) = phi_dummy(i,j+1);
+              elseif(j == ny)
+                  phi_dummy(i,j) = phi_dummy(i,j-1);
+              end
+          
+          elseif (cond == 'PB')
+              %Periodic Boundary condtions:
+              if ( i == 1 )
+                  phi_dummy(i,j) = phi_dummy(nx-1,j);
+              elseif( i == nx )
+                  phi_dummy(i,j) = phi_dummy(2,j);
+              elseif( j == 1 )
+                  phi_dummy(i,j) = phi_dummy(i,ny-1);
+              elseif(j == ny)
+                  phi_dummy(i,j) = phi_dummy(i,2);
+              end
+          elseif (cond == 'MX')
+              if ( i == 1 )
+                  phi_dummy(i,j) = 1;
+              elseif( i == nx )
+                  phi_dummy(i,j) = 0;
+              elseif( j == 1 )
+                  phi_dummy(i,j) = phi_dummy(i,j+1);
+              elseif(j == ny)
+                  phi_dummy(i,j) = phi_dummy(i,j-1);
+              end
+          else
+              fprintf ( 1, 'Condition does not exist! \n' );
           end
       end
   end
-  figure(1);
-  if (rem(it*dt,.0001)==0)
-      surf(reshape(phi',nx,ny));
-      zlim([0 1]);
-      pause(0.001)
-      drawnow;
-  end
+
+  phi = reshape(phi_dummy,[],1);
+  g_phi = calc_g ( node_num, node_xy,  ...
+    element_order, element_num, element_node, phi ,par_a, par_b, par_c );
+  b = -2 * a * phi + g_phi;
+  
+  dphidt = c \ b;
+  nphi = dt * dphidt + phi;
   phi = nphi;
 end
-%
-% %  SOLVE the linear system A * C = B.
-% %
-%   c = a \ b;
-% %
-% %  COMPARE computed and exact solutions at the nodes.
-% %
-%   fprintf ( 1, '\n' );
-%   fprintf ( 1, '     K     I     J          X           Y        U               U\n' );
-%   fprintf ( 1, '                                                 exact           computed \n' );
-% 
-%   k = 0;
-% 
-%   for j = 1 : ny
-%     fprintf ( 1, '\n' );
-%     for i = 1 : nx
-% 
-%       k = k + 1;
-% 
-%       [ u, dudx, dudy ] = exact ( node_xy(1,k), node_xy(2,k) );
-% 
-%       fprintf ( 1, '  %4d  %4d  %4d  %10f  %10f  %14e  %14e  %14e\n', ...
-%         k, i, j, node_xy(1,k), node_xy(2,k), u, c(k), abs ( u - c(k) ) );
-% 
-%     end
-% 
-%   end
-% %
-% %  Compute error integrals.
-% %
-%   if ( 1 )
-% 
-%   el2 = 0.0;
-%   eh1 = 0.0;
-% 
-%   for e = 1 : element_num
-% 
-%     i1 = element_node(1,e);
-%     i2 = element_node(2,e);
-%     i3 = element_node(3,e);
-% 
-%     area = 0.5 * ...
-%       ( node_xy(1,i1) * ( node_xy(2,i2) - node_xy(2,i3) ) ...
-%       + node_xy(1,i2) * ( node_xy(2,i3) - node_xy(2,i1) ) ...
-%       + node_xy(1,i3) * ( node_xy(2,i1) - node_xy(2,i2) ) );
-% %
-% %  Consider each quadrature point.
-% %  Here, we use the midside nodes as quadrature points.
-% %
-%     for q1 = 1 : 3
-% 
-%       q2 = mod ( q1, 3 ) + 1;
-% 
-%       nq1 = element_node(q1,e);
-%       nq2 = element_node(q2,e);
-% 
-%       xq = 0.5 * ( node_xy(1,nq1) + node_xy(1,nq2) );
-%       yq = 0.5 * ( node_xy(2,nq1) + node_xy(2,nq2) );
-%       wq = 1.0 / 3.0;
-% 
-%       uh = 0.0;
-%       dudxh = 0.0;
-%       dudyh = 0.0;
-% 
-%       for tj1 = 1 : element_order
-% 
-%         tj2 = mod ( tj1,     3 ) + 1;
-%         tj3 = mod ( tj1 + 1, 3 ) + 1;
-% 
-%         ntj1 = element_node(tj1,e);
-%         ntj2 = element_node(tj2,e);
-%         ntj3 = element_node(tj3,e);
-% 
-%         qj = 0.5 * ( ...
-%             ( node_xy(1,ntj3) - node_xy(1,ntj2) ) * ( yq - node_xy(2,ntj2) ) ...
-%           - ( node_xy(2,ntj3) - node_xy(2,ntj2) ) * ( xq - node_xy(1,ntj2) ) ) ...
-%               / area;
-%         dqjdx = - 0.5 * ( node_xy(2,ntj3) - node_xy(2,ntj2) ) / area;
-%         dqjdy =   0.5 * ( node_xy(1,ntj3) - node_xy(1,ntj2) ) / area;
-% 
-%         uh    = uh    + c(ntj1) * qj;
-%         dudxh = dudxh + c(ntj1) * dqjdx;
-%         dudyh = dudyh + c(ntj1) * dqjdy;
-% 
-%       end
-% 
-%       [ u, dudx, dudy ] = exact ( xq, yq );
-% 
-%       el2 = el2 + ( uh - u )^2 * area;
-%       eh1 = eh1 + ( ( dudxh - dudx )^2 + ( dudyh - dudy )^2 ) * area;
-% 
-%     end
-% 
-%   end
-% 
-%   el2 = sqrt ( el2 );
-%   eh1 = sqrt ( eh1 );
-% 
-%   fprintf ( 1, '\n' );
-%   fprintf ( 1, '*********************************************\n' );
-%   fprintf ( 1, '*                                           *\n' );
-%   fprintf ( 1, '*  ERRORS:                                  *\n' );
-%   fprintf ( 1, '*    L2 error =          %14f     *\n', el2 );
-%   fprintf ( 1, '*    H1-seminorm error = %14f     *\n', eh1 );
-%   fprintf ( 1, '*                                           *\n' );
-%   fprintf ( 1, '*********************************************\n' );
-% 
-%   end
-% %
-% %  WRITE the data to files.
-% %
-%   node_filename = 'rectangle_nodes.txt';
-% 
-%   r8mat_write ( node_filename, 2, node_num, node_xy );
-% 
-%   fprintf ( 1, '\n' );
-%   fprintf ( 1, '  Wrote the node file "%s"\n', node_filename );
-% 
-%   element_filename = 'rectangle_elements.txt';
-% 
-%   i4mat_write ( element_filename, element_order, element_num, element_node );
-% 
-%   fprintf ( 1, '  Wrote the element file "%s"\n', element_filename );
-% 
-%   value_filename = 'rectangle_solution.txt';
-% 
-%   r8mat_write ( value_filename, 1, node_num, c' );
-% 
-%   fprintf ( 1, '  Wrote the solution value file "%s"\n', value_filename );
-% %
-% %  Terminate.
-% %
-%   fprintf ( 1, '\n' );
-%   fprintf ( 1, 'FEM2D_POISSON_RECTANGLE_LINEAR:\n' );
-%   fprintf ( 1, '  Normal end of execution.\n' );
-%   fprintf ( 1, '\n' );
-%   timestamp ( );
-% 
-%   return
-% end
-% function [ u, dudx, dudy ] = exact ( x, y )
-% 
-% %*****************************************************************************80
-% %
-% %% EXACT calculates the exact solution and its first derivatives.
-% %
-% %  Discussion:
-% %
-% %    The function specified here depends on the problem being
-% %    solved.  The user must be sure to change both EXACT and RHS
-% %    or the program will have inconsistent data.
-% %
-% %  Licensing:
-% %
-% %    This code is distributed under the GNU LGPL license.
-% %
-% %  Modified:
-% %
-% %    28 November 2008
-% %
-% %  Author:
-% %
-% %    John Burkardt
-% %
-% %  Parameters:
-% %
-% %    Input, real X, Y, the coordinates of a point
-% %    in the region, at which the exact solution is to be evaluated.
-% %
-% %    Output, real U, DUDX, DUDY, the value of
-% %    the exact solution U and its derivatives dUdX
-% %    and dUdY at the point (X,Y).
-% %
-%   u    =      sin ( pi * x ) * sin ( pi * y ) + x;
-%   dudx = pi * cos ( pi * x ) * sin ( pi * y ) + 1.0;
-%   dudy = pi * sin ( pi * x ) * cos ( pi * y );
-% 
-%   return
-% end
-% function i4mat_write ( output_filename, m, n, table )
-% 
-% %*****************************************************************************80
-% %
-% %% I4MAT_WRITE writes an I4MAT file.
-% %
-% %  Licensing:
-% %
-% %    This code is distributed under the GNU LGPL license.
-% %
-% %  Modified:
-% %
-% %    09 August 2009
-% %
-% %  Author:
-% %
-% %    John Burkardt
-% %
-% %  Parameters:
-% %
-% %    Input, string OUTPUT_FILENAME, the output filename.
-% %
-% %    Input, integer M, the spatial dimension.
-% %
-% %    Input, integer N, the number of points.
-% %
-% %    Input, integer TABLE(M,N), the points.
-% %
-% 
-% %
-% %  Open the file.
-% %
-%   output_unit = fopen ( output_filename, 'wt' );
-% 
-%   if ( output_unit < 0 )
-%     fprintf ( 1, '\n' );
-%     fprintf ( 1, 'I4MAT_WRITE - Error!\n' );
-%     fprintf ( 1, '  Could not open the output file.\n' );
-%     error ( 'I4MAT_WRITE - Error!' );
-%   end
-% %
-% %  Write the data.
-% %
-%   for j = 1 : n
-%     for i = 1 : m
-%       fprintf ( output_unit, '  %12d', round ( table(i,j) ) );
-%     end
-%     fprintf ( output_unit, '\n' );
-%   end
-% %
-% %  Close the file.
-% %
-%   fclose ( output_unit );
-% 
-%   return
-% end
-% function r8mat_write ( output_filename, m, n, table )
-% 
-% %*****************************************************************************80
-% %
-% %% R8MAT_WRITE writes an R8MAT file.
-% %
-% %  Licensing:
-% %
-% %    This code is distributed under the GNU LGPL license.
-% %
-% %  Modified:
-% %
-% %    11 August 2009
-% %
-% %  Author:
-% %
-% %    John Burkardt
-% %
-% %  Parameters:
-% %
-% %    Input, string OUTPUT_FILENAME, the output filename.
-% %
-% %    Input, integer M, the spatial dimension.
-% %
-% %    Input, integer N, the number of points.
-% %
-% %    Input, real TABLE(M,N), the points.
-% %
-% 
-% %
-% %  Open the file.
-% %
-%   output_unit = fopen ( output_filename, 'wt' );
-% 
-%   if ( output_unit < 0 )
-%     fprintf ( 1, '\n' );
-%     fprintf ( 1, 'R8MAT_WRITE - Error!\n' );
-%     fprintf ( 1, '  Could not open the output file.\n' );
-%     error ( 'R8MAT_WRITE - Error!' );
-%   end
-% %
-% %  Write the data.
-% %
-% %  For smaller data files, and less precision, try:
-% %
-% %     fprintf ( output_unit, '  %14.6f', table(i,j) );
-% %
-%   for j = 1 : n
-%     for i = 1 : m
-%       fprintf ( output_unit, '  %24.16f', table(i,j) );
-%     end
-%     fprintf ( output_unit, '\n' );
-%   end
-% %
-% %  Close the file.
-% %
-%   fclose ( output_unit );
-% 
-%   return
-% end
-% function timestamp ( )
-% 
-% %*****************************************************************************80
-% %
-% %% TIMESTAMP prints the current YMDHMS date as a timestamp.
-% %
-% %  Licensing:
-% %
-% %    This code is distributed under the GNU LGPL license.
-% %
-% %  Modified:
-% %
-% %    14 February 2003
-% %
-% %  Author:
-% %
-% %    John Burkardt
-% %
-%   t = now;
-%   c = datevec ( t );
-%   s = datestr ( c, 0 );
-%   fprintf ( 1, '%s\n', s );
-% 
-%   return
-% end
+end
+
+function g = calc_g ( node_num, node_xy, ...
+        element_order, element_num, element_node, phi, par_a, par_b, par_c )
+    g = zeros(node_num,1);
+    for ie = 1 : element_num
+        
+        gi1 = element_node(1,ie);
+        gi2 = element_node(2,ie);
+        gi3 = element_node(3,ie);
+        
+        area = 0.5 * ...
+            ( node_xy(1,gi1) * ( node_xy(2,gi2) - node_xy(2,gi3) ) ...
+            + node_xy(1,gi2) * ( node_xy(2,gi3) - node_xy(2,gi1) ) ...
+            + node_xy(1,gi3) * ( node_xy(2,gi1) - node_xy(2,gi2) ) );
+        %
+        %  Consider each quadrature point.
+        %  Here, we use the midside nodes as quadrature points.
+        %
+        for q1 = 1 : 3
+            
+            q2 = mod ( q1, 3 ) + 1;
+            
+            nq1 = element_node(q1,ie);
+            nq2 = element_node(q2,ie);
+            
+            xq = 0.5 * ( node_xy(1,nq1) + node_xy(1,nq2) );
+            yq = 0.5 * ( node_xy(2,nq1) + node_xy(2,nq2) );
+            wq = 1.0 / 3.0;
+            
+            phi_q = 0;
+            %
+            %  Consider each test function in the element.
+            %
+            for ti1 = 1 : element_order
+                
+               
+                ti2 = mod ( ti1,     3 ) + 1;
+                ti3 = mod ( ti1 + 1, 3 ) + 1;
+                
+                nti1 = element_node(ti1,ie);
+                nti2 = element_node(ti2,ie);
+                nti3 = element_node(ti3,ie);
+                qi = 0.5 * ( ...
+                    ( node_xy(1,nti3) - node_xy(1,nti2) ) * ( yq - node_xy(2,nti2) ) ...
+                    - ( node_xy(2,nti3) - node_xy(2,nti2) ) * ( xq - node_xy(1,nti2) ) ) ...
+                    / area;
+                
+                phi_q = phi_q + qi * phi(nti1);
+            end
+            
+            gvalue = par_a * phi_q.^3 + par_b * phi_q.^2 + par_c * phi_q;
+            
+            %
+            %  Consider each basis function in the element.
+            %
+            for tj1 = 1 : element_order
+                
+                tj2 = mod ( tj1,     3 ) + 1;
+                tj3 = mod ( tj1 + 1, 3 ) + 1;
+                
+                ntj1 = element_node(tj1,ie);
+                ntj2 = element_node(tj2,ie);
+                ntj3 = element_node(tj3,ie);
+                
+                qj = 0.5 * ( ...
+                    ( node_xy(1,ntj3) - node_xy(1,ntj2) ) * ( yq - node_xy(2,ntj2) ) ...
+                    - ( node_xy(2,ntj3) - node_xy(2,ntj2) ) * ( xq - node_xy(1,ntj2) ) ) ...
+                    / area;
+                
+                g(ntj1) = g(ntj1) + area * wq * gvalue * qj;
+                
+            end
+            
+        end
+        
+    end
+end
