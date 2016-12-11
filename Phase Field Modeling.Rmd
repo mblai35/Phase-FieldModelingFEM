@@ -133,7 +133,9 @@ $$[C_{e_{i}}] = [N]^T [N] $$
 
 ### Methods
   
-  In order to implement the FEM, we began with a rectangular mesh generating code written in Matlab.$^7$ From here, we modified the code to fit our model. This involved changing ____________. Finally, we translated our modified Matlab code into C. 
+  In order to implement the FEM, we began by considering the equation without $g(\phi)$. Without $g(\phi)$, we can compare our results to the heat equation. Be began with a triangular mesh generating code written in Matlab by John Burkardt.$^7$ From here, we modified the code to fit our model. This involved changing ____________. We started with very simple initial conditions, letting a square within our rectangular domain represent $\phi$ = 1 and elsewhere $\phi = 0$. Neumann, Dirichlet, and Periodic boundary conditions were imposed.  
+  
+  ![Initial conditions for our PFM. The rectangular region represents $\phi$ = 1 and elsewhere $\phi = 0$.](/Users/mblai/Documents/GitHub/Phase-FieldModelingFEM/Initial_cond.png)
 
 &nbsp;
 
