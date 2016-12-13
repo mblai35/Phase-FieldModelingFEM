@@ -26,6 +26,12 @@ where
 g(\phi)=a\phi^3 + b\phi^2 + c\phi
 \]
 
+with 
+
+$$a = \frac{-36}{\epsilon^2}$$ 
+$$b = \frac{54}{\epsilon^2} + \frac{6m}{\epsilon}$$ $$and$$ 
+$$c = - \left( \frac{18}{\epsilon^2} + \frac{6m}{\epsilon} \right)$$
+
 \[
 \Rightarrow \frac{\partial \phi}{\partial t}-2\nabla\cdot\nabla\phi+g(\phi)=0
 \]
@@ -133,9 +139,11 @@ $$[C_{e_{i}}] = [N]^T [N] $$
 
 ### Methods
   
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;In order to implement the FEM, we began by considering the equation without $g(\phi)$. By witholding $g(\phi)$, we can then compare our results to the heat equation. Be began with a triangular mesh generating code written in Matlab by John Burkardt.$^7$ From here, we modified the code to fit our model. This involved changing ____________. We started with very simple initial conditions, letting a square within our rectangular domain represent $\phi$ = 1 and elsewhere $\phi = 0$. Neumann, Dirichlet, and Periodic boundary conditions were imposed.  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;In order to implement the FEM, we began by considering the equation without $g(\phi)$. By witholding $g(\phi)$, we can then compare our results to the heat equation. Be began with a triangular mesh generating code written in Matlab by John Burkardt.$^7$ From here, we modified the code to fit our model. This involved changing ____________. We started with very simple initial conditions, letting a square within our rectangular domain represent a solid phase with $\phi$ = 1 and elsewhere a liquid phase with $\phi = 0$. Neumann, Dirichlet, and Periodic boundary conditions were imposed.
   
   ![Initial conditions for our PFM. The rectangular region represents $\phi$ = 1 and elsewhere $\phi = 0$.](/Users/mblai/Documents/GitHub/Phase-FieldModelingFEM/Initial_cond.png)
+  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;After successful implementation of all three boundary conditions without $g(\phi)$, we added $g(\phi)$ to our modified code. Instead of a square domain, we produced a rectangular strip. We varied $\epsilon$ to see if changes in the diffusion of the interface could be detected. Then we varied $m$ to see if changes in direction and speed at the interface could be seen. We compared our results with those seen in Nestler$^1$. 
   
 ### Results
   
@@ -182,6 +190,8 @@ $$[C_{e_{i}}] = [N]^T [N] $$
 &nbsp;
 
 &nbsp;
+
+References
 
 1.	Nestler, B. 7 - Phase-Field Modeling, In Computational Materials Engineering, Academic Press, Burlington, 2007, Pages 219-266, http://dx.doi.org/10.1016/B978-012369468-3/50007-1.
 2.	Moelans, N., Blanpain, B., & Wollants, P. (2008). Calphad: An introduction to phase-field modeling of microstructure evolution Pergamon Press. doi:10.1016/j.calphad.2007.11.003
