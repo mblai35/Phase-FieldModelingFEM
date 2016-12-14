@@ -1,9 +1,16 @@
 ---
 title: "Phase-Field Modeling with Finite Element Method"
-author: "Xiukun Hu, Mallory Lai, Geeta Monpara"
+author: "Xiukun Hu$^{1,2}$, Mallory Lai$^{1,3}$, Geeta Monpara$^{1,4}$"
 date: "11/11/2016"
 output: pdf_document
 ---
+$^1$ University of Wyoming,
+$^2$ Department of Mathematics,
+$^3$ Department of Botany
+$^4$ Department of Mechanical Engineering
+
+&nbsp;
+
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Since the underlying microstructure of a material can affect its physical properties, it is important to understand the processes underlying microstructure formation in order to improve engineered materials.$^1$ However, modeling microstructure formation is complicated by the fact that the structures are thermodynamically unstable and thus evolve over time.$^2$ Phase-field modeling has gained popularity as a technique for simulating microstructure evolution due to its ability to incorporate different thermodynamic driving forces into the model. As such, it can be used to simulate the microstructure evolution seen in such processes as solidification, grain growth, and solid-state phase transformations.$^2$ 
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; When it comes to phase-field modeling, the finite element method (FEM) underlies some of the most efficient and accuracte numerical methods to date.$^3$ The strength of the finite element method arises from its ability to model irregular shapes, heterogeneous materials, general load conditions, nonlinear behavior, and dynamic effects. Furthermore, once the finite element model is established, it can be modified relatively easily.$^4$ Finite element analysis involves the conversion of the original partial differential equation (PDE) from its original, strong form, into a weak integral form. The domain is then discretized into elements from which shape functions are used to find an approximate numerical solution.$^5$ 
@@ -155,7 +162,11 @@ $$[C_{e_{i}}] = [N]^T [N] $$
     
   ![Periodic boundary conditions for our PFM without $g(\phi)$.](/Users/mblai/Documents/GitHub/Phase-FieldModelingFEM/PB_HeatEqn.png)
 
+### Discussion
+  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Insert error analysis stuff
 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Future work should center around speeding up the current code. Converting the code from Matlab to C, and using techniques for sparse matrices, we believe the code could be sped up considerably. 
 
 &nbsp;
 
