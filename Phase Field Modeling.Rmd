@@ -21,13 +21,15 @@ $^4$ Department of Mechanical Engineering
 
 #####Phase field equation:   
 
+In the current work, we try to model solidification of a one component system with phase field method. Our phase filed variable $\phi$ assumes values between 0 and 1, where value 0 represents liquid state and 1 represents solid state. We began with the Ginzburg-Landau entropy functional $S(\phi)$.$^1$ Using variational calculus, we minimize this functional with respect to $\phi$ and arrive at the following partial differential equation: 
+
 \[ \frac{\partial \phi}{\partial t}
    = 2 \left( \frac{\partial^2 \phi}{\partial x^2}
       + \frac{\partial^2 \phi}{\partial y^2}\right)
       -g(\phi)
 \]
 
-where 
+where, 
 
 \[
 g(\phi)=a\phi^3 + b\phi^2 + c\phi
@@ -38,6 +40,8 @@ with
 $$a = \frac{-36}{\epsilon^2}$$ 
 $$b = \frac{54}{\epsilon^2} + \frac{6m}{\epsilon}$$ $$and$$ 
 $$c = - \left( \frac{18}{\epsilon^2} + \frac{6m}{\epsilon} \right)$$
+
+where, $\epsilon$ determines how diffused the solid-liquid interface would be while $m$ is a driving force for the interface.
 
 \[
 \Rightarrow \frac{\partial \phi}{\partial t}-2\nabla\cdot\nabla\phi+g(\phi)=0
@@ -61,6 +65,7 @@ $$c = - \left( \frac{18}{\epsilon^2} + \frac{6m}{\epsilon} \right)$$
 \int_{\Omega_{e_{i}}}\int \left( [N]^T\frac{\partial \phi}{\partial t} \right) dxdy
 \]
 
+Replacing global coordinates with local (elemental) coordinates ($\xi-\eta$) for a rectangualr element:
 
 $$=\int_{-1}^{1}\int_{-1}^{1} \left( [N(\xi,\eta)]^T \frac {\partial \phi(\xi,\eta)}{\partial t} |J| \right)  d\xi d\eta$$
 
