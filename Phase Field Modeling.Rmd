@@ -17,11 +17,9 @@ $^4$ Department of Mechanical Engineering
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; We present here the Galerkin finite element in 2D. The Galerkin method is an example of a weighted residual method which assumes the same shape functions are used for both the solution and the weights.$^5$ We begin by identifying the strong form PDE and rearranging to get zero on the right hand side. We then multiply the resulting equation by our shape function, as per the Galerkin method.$^6$ Finally, we integrate over the domain, accounting for both local and global coordinate systems. 
 
-&nbsp;
-
 #####Phase field equation:   
 
-In the current work, we model solidification of a one component system with phase field method. We solve phase field equations by finite element analysis. Our phase filed variable $\phi$ assumes values between 0 and 1, where value 0 represents liquid state and 1 represents solid state. We began with the Ginzburg-Landau entropy functional $S(\phi)$.$^1$ Using variational calculus, we further minimize this functional with respect to $\phi$ and arrive at the following partial differential equation: 
+In the current work, we model solidification of a one component system with the phase field method. We solve phase field equations by finite element analysis. Our phase field variable $\phi$ assumes values between 0 and 1, where value 0 represents the liquid state and 1 represents solid state. We began with the Ginzburg-Landau entropy functional $S(\phi)$.$^1$ Using variational calculus, we further minimize this functional with respect to $\phi$ and arrive at the following partial differential equation: 
 
 \[ \frac{\partial \phi}{\partial t}
    = 2 \left( \frac{\partial^2 \phi}{\partial x^2}
@@ -158,48 +156,112 @@ Where,
 $$[C_{e_{i}}] = [N]^T [N] $$  
 
 &nbsp;
+
 ### Methods
   
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;In order to implement the FEM, we began by considering the equation without $g(\phi)$. By witholding $g(\phi)$, we can then compare our results to the heat equation. Be began with a triangular mesh generating code written in Matlab by John Burkardt.$^7$ From here, we modified the code to fit our model. This involved changing ____________. We started with very simple initial conditions, letting a square within our rectangular domain represent a solid phase with $\phi$ = 1 and elsewhere a liquid phase with $\phi = 0$. Neumann, Dirichlet, and Periodic boundary conditions were imposed.
-  
-  ![Initial conditions for our PFM. The rectangular region represents $\phi$ = 1 and elsewhere $\phi = 0$.](/Users/mblai/Documents/GitHub/Phase-FieldModelingFEM/Initial_cond.png)
-  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;In order to implement the FEM, we began by considering the equation without $g(\phi)$. By witholding $g(\phi)$, we can then compare our results to the heat equation. Be began with a triangular mesh generating code written in Matlab by John Burkardt.$^7$ From here, we modified the code to fit our model. We started with very simple initial conditions, letting a square within our rectangular domain represent a solid phase with $\phi$ = 1 and elsewhere a liquid phase with $\phi = 0$ (Fig.1). Neumann, Dirichlet, and Periodic boundary conditions were imposed.
+
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;After successful implementation of all three boundary conditions without $g(\phi)$, we added $g(\phi)$ to our modified code. Instead of a square domain, we produced a rectangular strip. We varied $\epsilon$ to see if changes in the diffusion of the interface could be detected. Then we varied $m$ to see if changes in direction and speed at the interface could be seen. We compared our results with those seen in Nestler$^1$. 
   
 ### Results and Discussion
 #####Without $g(\phi)$:  
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Modification of our code without $g(\phi)$ produced results aligning with those of the heat equation. 
-(1) Neumann Boundary Conditions:
-$$\nabla\phi\cdotn_{\partial\Omega} = 0$$
-Implimenting for a rectangular box:
+&nbsp;
+
+Modification of our code without $g(\phi)$ produced results aligning with those of the heat equation. 
+&nbsp;
+
+(1) Neumann Boundary Conditions (Fig. 2):
+$$\nabla\phi\cdot_{\partial\Omega} = 0$$
+Implementing for a rectangular box:
 $$\phi_{0,j} = \phi_{1,j}; \phi_{N_x,j} = \phi_{N_x-1,j}$$
 $$\phi_{i,0} = \phi_{i,1}; \phi_{i,N_y} = \phi_{i,N_y-1}$$
 where, $i/j = 0,1,2, ...N_x/N_y$
 
-  ![Neumann boundary conditions for our PFM without $g(\phi)$.](/Users/mblai/Documents/GitHub/Phase-FieldModelingFEM/Neumann_HeatEqn.png)
+(2) Dirichlet Boundary Conditions (Fig. 3): Here, all $\phi_{i,j} = 0$ at all the boundary points
 
-(2) Dirichlet Boundary Conditions: Here, all $\phi_{i,j} = 0$ at all the boundary points
 
-  ![Dirichlet boundary conditions for our PFM without $g(\phi)$.](/Users/mblai/Documents/GitHub/Phase-FieldModelingFEM/Dirichlet_HeatEqn.png)
-(3) Periodic Boundary Conditions:
+(3) Periodic Boundary Conditions (Fig. 4):
 $$\phi_{0,j} = \phi_{N_x-1,j}; \phi_{N_x,j} = \phi_{1,j}$$
 $$\phi_{i,0} = \phi_{i,N_y-1}; \phi_{i,N_y} = \phi_{i,1}$$
 where, $i/j = 0,1,2, ...N_x/N_y$
-  ![Periodic boundary conditions for our PFM without $g(\phi)$.](/Users/mblai/Documents/GitHub/Phase-FieldModelingFEM/PB_HeatEqn.png)
 
 #####With $g(\phi)$:  
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;We further modify our code to impliment $g(\phi)$. To benchmark our results with Nestlet$^1$, we simulate the following cases:
+&nbsp;
 
-(1) $\epsilon = 1 and 10$ while keeping m=0: These conditions imply that as the driving force is zero, interface should not move, however two different values of $\epsilon$ shows the difference in interfacial thickness. These results are presented in the figures below. Further the animations are contained in the files named as fem_eps_1m_0.mp4 and fem_eps_10m_0.mp4 in the Dropbox folder.
+We further modified our code to implement $g(\phi)$. To benchmark our results with Nestler$^1$, we simulated the following cases:
 
-(2) $m = 1 and -1$ while keeping $\epsilon = 1$: These conditions should make interface move in the opposite directions with respect to each other. For $m = 1$, interface will move downwards. In other words, $m = 1$ will make solid phase ($\phi = 1$) grow resulting in solidification while $m = -1$ will result in liquification where liquid phase will consume solid phase. These results presented in the figures below, compare excellently with Nestler.$^1$ Further the animations are contained in the files named as fem_eps_1m_1.mp4 and fem_eps_1m_-1.mp4 in the Dropbox folder.
+(1) $\epsilon = 1$ and $10$ while keeping m = 0: These conditions imply that as the driving force is zero, interface should not move. However, two different values of $\epsilon$ show the difference in interfacial thickness. Animations are contained in the files named fem_eps_1m_0.mp4 and fem_eps_10m_0.mp4 in the Dropbox folder.
+
+(2) $m = 1$ and $-1$ while keeping $\epsilon = 1$: These conditions should make the interface move in the opposite directions with respect to each other. For $m = 1$, the interface will move downwards. In other words, $m = 1$ will make the solid phase ($\phi = 1$) grow, resulting in solidification, while $m = -1$ will result in liquification where the liquid phase will consume solid phase. These results compare excellently with Nestler.$^1$ Again, the animations are contained in the files named as fem_eps_1m_1.mp4 and fem_eps_1m_-1.mp4 in the Dropbox folder.
  
-(3) Simulating Random Microstructure: Here, we populate the liquid melt ($\phi = 0$ matrix) with multiple solid phase seeds (zones of $\phi = 0$). Periodic boundary conditions are applied to the simulation box. Values of m and $\epsilon$ are 5 and 1 respectively. Animation of this simulation is in the Dropbox folder as random_microstructure.mp4. As seen from this animations, we find that the problem behaves as heat diffusion with increasing amount liquid, which eventially converts to solid (\phi = 1). This situation seems unrealistic as our differential equation does not account for temperature effect. Hence, with control parameter m = 5, solid phase should strictly grow, while we do not observe the same. Further analysis and comparison with other methods are required to resolve this problem.
+(3) Simulating Random Microstructure: Here, we populated the liquid melt ($\phi = 0$ matrix) with multiple solid phase seeds (zones of $\phi = 0$). Periodic boundary conditions were applied to the simulation box. Values of m and $\epsilon$ are 5 and 1, respectively. Animation of this simulation is in the Dropbox folder as random_microstructure.mp4. As seen from this animation, we find that the problem behaves as heat diffusion with an increasing amount liquid, which eventually converts to solid ($\phi = 1$). This situation seems unrealistic as our differential equation does not account for temperature effect. Hence, with control parameter m = 5, solid phase should strictly grow, while we do not observe the same. 
 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For the stability analysis, we changed the discretization to see its effects on stability. We get a maximum value for dt (dt\_max) given a mesh size. For dt values less than dt\_max, the analysis will be stable. In the figures, we show the variations of dt\_max with dx*dy, where dx and dy is the mesh size in the x and y directions. We find a linear relationship between the two variables. This behavior is consistent among the different boundary conditions used. However, it changes upon manipulation of the size of the domain and initial conditions.  
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Insert error analysis stuff
+```{r, echo=F}
+nxny <- c(10, 30, 50, 70)
+dxdy <- (1/nxny)^2
+dt <- c(2*10^(-4), 4.6*10^(-5), 1.61*10^(-5), 8*10^(-6))
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Future work should center around speeding up the current code. Converting the code from Matlab to C, and using techniques for sparse matrices, we believe the code could be sped up considerably. 
+errors <- data.frame(dxdy, dt)
+
+plot(dxdy, dt, type ='l', main = "Dirichlet Boundary Conditions")
+
+fit <- lm(dt ~ dxdy , data = errors)
+
+abline(fit, col= 'red')
+```
+
+```{r, echo=F}
+nxny <- c(10, 30, 40, 50, 70)
+dxdy <- (1/nxny)^2
+dt <- c(4.7*10^(-4), 4.5*10^(-5), 6.3*10^(-6), 4.1*10^(-6), 8*10^(-6))
+
+errors <- data.frame(dxdy, dt)
+
+plot(dxdy, dt, type ='l', main = "Neumann Boundary Conditions")
+
+fit <- lm(dt ~ dxdy , data = errors)
+
+abline(fit, col= 'red')
+```
+
+```{r, echo=F}
+nxny <- c(100, 400, 800, 900, 1600, 2500, 6400)
+dxdy <- 1/nxny
+dt <- c(0.00046, .0001, 0.00004, 0.000046, 0.000025, 0.000016, 0.000006)
+
+errors <- data.frame(dxdy, dt)
+
+plot(dxdy, dt, type ='l', main = "Periodic Boundary Conditions")
+
+fit <- lm(dt ~ dxdy , data = errors)
+abline(fit, col= 'red')
+```
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Further analysis and comparison with other methods are required to resolve the problems surrounding the simulation of random microstructure. Future work should center around speeding up the current code. Converting the code from Matlab to C, and using techniques for sparse matrices, we believe the code could be sped up considerably. 
+
+&nbsp;
+
+  ![Initial conditions for our PFM. The rectangular region represents $\phi$ = 1 and elsewhere $\phi = 0$.](/Users/mblai/Documents/GitHub/Phase-FieldModelingFEM/Initial_cond.png)
+  
+&nbsp;
+
+&nbsp;
+
+  ![Neumann boundary conditions for our PFM without $g(\phi)$.](/Users/mblai/Documents/GitHub/Phase-FieldModelingFEM/Neumann_HeatEqn.png)
+
+&nbsp;
+
+&nbsp;
+
+  ![Dirichlet boundary conditions for our PFM without $g(\phi)$.](/Users/mblai/Documents/GitHub/Phase-FieldModelingFEM/Dirichlet_HeatEqn.png)
+
+&nbsp;
+
+&nbsp;
+  
+  ![Periodic boundary conditions for our PFM without $g(\phi)$.](/Users/mblai/Documents/GitHub/Phase-FieldModelingFEM/PB_HeatEqn.png)
 
 &nbsp;
 
@@ -218,29 +280,18 @@ where, $i/j = 0,1,2, ...N_x/N_y$
 &nbsp;
 
 &nbsp;
+  
+### Supplementary materials   
 
+Found in Dropbox folder ma5340f16 within the LMH-phase-field-model folder.
 &nbsp;
 
-&nbsp;
-
-&nbsp;
-
-&nbsp;
-
-&nbsp;
-
-&nbsp;
-
-&nbsp;
-
-&nbsp;
-
-References
+###References
 
 1.	Nestler, B. 7 - Phase-Field Modeling, In Computational Materials Engineering, Academic Press, Burlington, 2007, Pages 219-266, http://dx.doi.org/10.1016/B978-012369468-3/50007-1.
 2.	Moelans, N., Blanpain, B., & Wollants, P. (2008). Calphad: An introduction to phase-field modeling of microstructure evolution Pergamon Press. doi:10.1016/j.calphad.2007.11.003
 3. Provatas, N., Elder, K. Phase-Field Methods in Material Science and Engineering. Wiley-VCH, 2010.
 4. Logan, D. A First Course in the Finite Element Method, Fourth Edition. Thomson, 2007. 
 5. Becker, T., & Kaus, B. Numerical Modeling of Earth Systems: An introduction to computational methods with focus on solid Earth applications of continuum mechanics. USC, Los Angeles, 2016. 
-6. MOOSE website.
+6. MOOSE Framework. Finite Elements:The MOOSE way. http://mooseframework.org/wiki/MooseTraining/FEM/
 7. Burkardt, J. fem2d_poisson_rectangle_linear.m 2010.
