@@ -21,7 +21,7 @@ $^4$ Department of Mechanical Engineering
 
 #####Phase field equation:   
 
-In the current work, we try to model solidification of a one component system with phase field method. Our phase filed variable $\phi$ assumes values between 0 and 1, where value 0 represents liquid state and 1 represents solid state. We began with the Ginzburg-Landau entropy functional $S(\phi)$.$^1$ Using variational calculus, we minimize this functional with respect to $\phi$ and arrive at the following partial differential equation: 
+In the current work, we model solidification of a one component system with phase field method. We solve phase field equations by finite element analysis. Our phase filed variable $\phi$ assumes values between 0 and 1, where value 0 represents liquid state and 1 represents solid state. We began with the Ginzburg-Landau entropy functional $S(\phi)$.$^1$ Using variational calculus, we further minimize this functional with respect to $\phi$ and arrive at the following partial differential equation: 
 
 \[ \frac{\partial \phi}{\partial t}
    = 2 \left( \frac{\partial^2 \phi}{\partial x^2}
@@ -42,6 +42,8 @@ $$b = \frac{54}{\epsilon^2} + \frac{6m}{\epsilon}$$ $$and$$
 $$c = - \left( \frac{18}{\epsilon^2} + \frac{6m}{\epsilon} \right)$$
 
 where, $\epsilon$ determines how diffused the solid-liquid interface would be while $m$ is a driving force for the interface.
+
+This differential equation represents the evolution of a phase field variable $\phi$  in time with the control variables $\epsilon$ and m. 
 
 \[
 \Rightarrow \frac{\partial \phi}{\partial t}-2\nabla\cdot\nabla\phi+g(\phi)=0
@@ -90,10 +92,18 @@ Second term:
 Applying Green's theorem/Divergence theorem:   
   
 $$=2 \{ -\int_{\Omega_{e_{i}}}\int \nabla\phi \cdot [N]^T dxdy + \oint N_{i}\nabla\phi\eta dl \}  $$  
-...  
-...  
-...  
 
+$$=(-[K]_{ei} + [BC_x]_{ei} + [BC_y]_{ei}) [\phi_{ei}]^T$$
+
+Where,
+$$ [K]_{ei} = 2\int_{\Omega_{e_{i}}}\int {[B(1,:)]^T[B(1,:) + [B(1,:)]^T[B(1,:)]} |J|d\xi d\eta  \ $$
+$$ [BC_x]_{ei} = 2\int_{S}[N]^T [B(1,:)] dx $$ 
+$$ [BC_x]_{ei} = 2\int_{S}[N]^T [B(2,:)] dy $$ 
+and
+$$ [B] = \begin{bmatrix}
+    N_{1,x} & N_{2,x} & N_{3,x} & N_{4,x} \\
+    N_{1,y} & N_{2,y} & N_{3,y} & N_{4,y} 
+\end{bmatrix} $$
 &nbsp;
 
 Third term:  
