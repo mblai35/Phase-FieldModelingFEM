@@ -158,7 +158,6 @@ Where,
 $$[C_{e_{i}}] = [N]^T [N] $$  
 
 &nbsp;
-
 ### Methods
   
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;In order to implement the FEM, we began by considering the equation without $g(\phi)$. By witholding $g(\phi)$, we can then compare our results to the heat equation. Be began with a triangular mesh generating code written in Matlab by John Burkardt.$^7$ From here, we modified the code to fit our model. This involved changing ____________. We started with very simple initial conditions, letting a square within our rectangular domain represent a solid phase with $\phi$ = 1 and elsewhere a liquid phase with $\phi = 0$. Neumann, Dirichlet, and Periodic boundary conditions were imposed.
@@ -167,18 +166,37 @@ $$[C_{e_{i}}] = [N]^T [N] $$
   
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;After successful implementation of all three boundary conditions without $g(\phi)$, we added $g(\phi)$ to our modified code. Instead of a square domain, we produced a rectangular strip. We varied $\epsilon$ to see if changes in the diffusion of the interface could be detected. Then we varied $m$ to see if changes in direction and speed at the interface could be seen. We compared our results with those seen in Nestler$^1$. 
   
-### Results
-  
+### Results and Discussion
+#####Without $g(\phi)$:  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Modification of our code without $g(\phi)$ produced results aligning with those of the heat equation. 
+(1) Neumann Boundary Conditions:
+$$\nabla\phi\cdotn_{\partial\Omega} = 0$$
+Implimenting for a rectangular box:
+$$\phi_{0,j} = \phi_{1,j}; \phi_{N_x,j} = \phi_{N_x-1,j}$$
+$$\phi_{i,0} = \phi_{i,1}; \phi_{i,N_y} = \phi_{i,N_y-1}$$
+where, $i/j = 0,1,2, ...N_x/N_y$
 
   ![Neumann boundary conditions for our PFM without $g(\phi)$.](/Users/mblai/Documents/GitHub/Phase-FieldModelingFEM/Neumann_HeatEqn.png)
 
+(2) Dirichlet Boundary Conditions: Here, all $\phi_{i,j} = 0$ at all the boundary points
+
   ![Dirichlet boundary conditions for our PFM without $g(\phi)$.](/Users/mblai/Documents/GitHub/Phase-FieldModelingFEM/Dirichlet_HeatEqn.png)
-    
+(3) Periodic Boundary Conditions:
+$$\phi_{0,j} = \phi_{N_x-1,j}; \phi_{N_x,j} = \phi_{1,j}$$
+$$\phi_{i,0} = \phi_{i,N_y-1}; \phi_{i,N_y} = \phi_{i,1}$$
+where, $i/j = 0,1,2, ...N_x/N_y$
   ![Periodic boundary conditions for our PFM without $g(\phi)$.](/Users/mblai/Documents/GitHub/Phase-FieldModelingFEM/PB_HeatEqn.png)
 
-### Discussion
-  
+#####With $g(\phi)$:  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;We further modify our code to impliment $g(\phi)$. To benchmark our results with Nestlet$^1$, we simulate the following cases:
+
+(1) $\epsilon = 1 and 10$ while keeping m=0: These conditions imply that as the driving force is zero, interface should not move, however two different values of $\epsilon$ shows the difference in interfacial thickness. These results are presented in the figures below. Further the animations are contained in the files named as fem_eps_1m_0.mp4 and fem_eps_10m_0.mp4 in the Dropbox folder.
+
+(2) $m = 1 and -1$ while keeping $\epsilon = 1$: These conditions should make interface move in the opposite directions with respect to each other. For $m = 1$, interface will move downwards. In other words, $m = 1$ will make solid phase ($\phi = 1$) grow resulting in solidification while $m = -1$ will result in liquification where liquid phase will consume solid phase. These results presented in the figures below, compare excellently with Nestler.$^1$ Further the animations are contained in the files named as fem_eps_1m_1.mp4 and fem_eps_1m_-1.mp4 in the Dropbox folder.
+ 
+(3) Simulating Random Microstructure: Here, we populate the liquid melt ($\phi = 0$ matrix) with multiple solid phase seeds (zones of $\phi = 0$). Periodic boundary conditions are applied to the simulation box. Values of m and $\epsilon$ are 5 and 1 respectively. Animation of this simulation is in the Dropbox folder as random_microstructure.mp4. As seen from this animations, we find that the problem behaves as heat diffusion with increasing amount liquid, which eventially converts to solid (\phi = 1). This situation seems unrealistic as our differential equation does not account for temperature effect. Hence, with control parameter m = 5, solid phase should strictly grow, while we do not observe the same. Further analysis and comparison with other methods are required to resolve this problem.
+
+
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Insert error analysis stuff
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Future work should center around speeding up the current code. Converting the code from Matlab to C, and using techniques for sparse matrices, we believe the code could be sped up considerably. 
